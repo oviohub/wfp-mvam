@@ -59,24 +59,25 @@ def download_data(survey_name, save=True, verbose=False):
 
 
 def clean_data(raw_df, save=True):
-    raw_df[["RESPConsent", "Complete"]] = raw_df[[
-        "RESPConsent", "Complete"]].apply(pd.to_numeric)
+    raw_df[["b/RESPConsent", "f/Complete"]] = raw_df[[
+        "b/RESPConsent", "f/Complete"]].apply(pd.to_numeric)
     # valid if respondent agreed to participate and survey form is marked complete
-    valid_df = raw_df[(raw_df['RESPConsent'] < 3) & (raw_df['Complete'] == 1)]
+    valid_df = raw_df[(raw_df['b/RESPConsent'] < 3)
+                      & (raw_df['f/Complete'] == 1)]
 
     # check for duplicate respondent ids, and only keep first complete survey (by end time)
-    duplicates = valid_df[['SvyDate', 'RESPId']]
-    duplicates = duplicates[duplicates.duplicated(['RESPId'], keep=False)]
-    duplicates = duplicates.pivot_table(index='RESPId', aggfunc='size')
+    duplicates = valid_df[['a/SvyDate', 'a/RESPId']]
+    duplicates = duplicates[duplicates.duplicated(['a/RESPId'], keep=False)]
+    duplicates = duplicates.pivot_table(index='a/RESPId', aggfunc='size')
     if save:
         duplicates.to_csv(os.path.join(
             DATA_DIR, DUPLICATES_FILE), header=['Count'])
     valid_df.sort_values(by='end')
-    valid_df.drop_duplicates('RESPId', keep='first', inplace=True)
+    valid_df.drop_duplicates('a/RESPId', keep='first', inplace=True)
 
     # export summary of completed surveys per enumerator
     enumerator_crosstab = pd.crosstab(
-        valid_df['EnuName'], valid_df['Complete'])
+        valid_df['EnuName'], valid_df['f/Complete'])
     enumerator_crosstab.columns = ['Completed']
     enumerator_crosstab.loc['Total'] = pd.Series(
         enumerator_crosstab['Completed'].sum(), index=['Completed'])
@@ -133,7 +134,7 @@ def count_target_by_llg(df, save=True):
 def main():
     pd.options.mode.chained_assignment = None
     # data = pd.read_excel('./PNG - mVAM REVVG - 3 June.xlsx', sheet_name='PNG - mVAM REVVG', dtype=str)
-    data = download_data('PNG mVAM Round 6 (April 2019)')
+    data = download_data('PNG - mVAM REVVG')
     df = clean_data(data)
     count_target_by_llg(df)
 
