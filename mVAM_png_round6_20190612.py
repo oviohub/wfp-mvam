@@ -7,7 +7,7 @@ SURVEY_NAME = 'PNG - mVAM REVVG'
 
 # Make sure the admin area file is available in ./data.
 DATA_DIR = './data'
-ADMIN_AREA_FILE = './data/Sampling frame_UNWFP May 2019_GeoCode.xlsx'
+ADMIN_AREA_FILE = './resources/Sampling frame_UNWFP May 2019_GeoCode.xlsx'
 
 # File names
 RAW_DATA_FILE = 'png_round6_raw_data.csv'
@@ -84,6 +84,11 @@ def find_survey_column_name(data, column_name):
 
 
 def clean_data(raw_df, save=True):
+
+    # TODO - User utils.remove_prefix_list instead of find_survey_column_name.
+    #  # Remove KOBO prefixes from column names.
+    # raw_df = raw_df.rename(utils.remove_prefix_list, axis='columns')
+
     # Get useful column names
     RESPConsent = find_survey_column_name(raw_df, 'RESPConsent')
     Complete = find_survey_column_name(raw_df, 'Complete')
