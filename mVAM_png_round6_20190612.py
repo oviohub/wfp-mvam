@@ -90,9 +90,6 @@ def clean_data(raw_df, save=True):
     # Remove KOBO prefixes from column names.
     raw_df = raw_df.rename(utils.remove_prefix_list, axis='columns')
 
-    for column in raw_df.columns:
-        print(column)
-
     # Force data into numeric values
     raw_df[['RESPConsent', 'Complete']] = raw_df[[
         'RESPConsent', 'Complete']].apply(pd.to_numeric)
