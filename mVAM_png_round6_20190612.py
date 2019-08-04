@@ -71,7 +71,6 @@ def find_survey_column_name(data, column_name):
         return matching_columns[0]
 
     if len(matching_columns) == 0:
-        # print(data.columns)
         print(
             'No matching column for {column_name}'.format(
                 column_name=column_name)
@@ -144,20 +143,20 @@ def count_target_by_llg(df, save=True):
     # Use integers for ADMIN3Code
     df['ADMIN3Code'] = df['ADMIN3Code'].astype(int)
 
-    # generate counts per LLG
+    # Generate counts per LLG
     llg_count = df[df.duplicated(['ADMIN3Code'], keep=False)]
     llg_count = pd.DataFrame(df.pivot_table(
         index='ADMIN3Code', aggfunc='size'))
     llg_count.columns = ['Completed']
 
-    # merge with llg data
+    # Merge with llg data
     admin_areas = pd.read_excel(
         ADMIN_AREA_FILE, sheet_name='Master Sheet', dtype=str)
 
     # Drop empty rows with no GEOCODE info.
     admin_areas.dropna(subset=['GEOCODE'], inplace=True)
 
-    # # Use integers for GEOCODE
+    # Use integers for GEOCODE
     admin_areas['GEOCODE'] = admin_areas['GEOCODE'].astype(int)
 
     # Merge dataframe and admion areas
@@ -169,12 +168,12 @@ def count_target_by_llg(df, save=True):
         right_on=['ADMIN3Code']
     )
 
-    # replace NaN values with 0, convert strings to ints
+    # Replace NaN values with 0, convert strings to ints
     df['Completed'].fillna(0, inplace=True)
     df['Completed'] = df['Completed'].astype(int)
     df['Target_sample'] = df['Target_sample'].astype(int)
 
-    # get remaining counts, must not exceed 0
+    # Get remaining counts, must not exceed 0
     df['Remaining'] = df['Target_sample'].sub(df['Completed'], axis=0)
     df['Remaining'] = df['Remaining'].clip(lower=0)
     df.drop(df.tail(1).index, inplace=True)
