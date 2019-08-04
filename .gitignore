@@ -1,0 +1,8 @@
+
+.DS_Store
+
+# Ignore files created in ./data
+data/*.csv
+
+# Python Cache
+*.pyc
